@@ -1,0 +1,60 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  
+    - name: Group 'sudoroot' is created 
+      group:
+        name: sudoroot
+        state: present
+
+    - name: sudoroot group is added to /etc/sudoers 
+      lineinfile: 
+        dest: /etc/sudoers 
+        line: '%sudoroot ALL=(ALL) NOPASSWD: ALL'
+        state: present
+
+    - name: User 'sergei' is created
+      user: 
+        name: sergei 
+        shell: /bin/bash
+        groups: sudoroot  
+        createhome: yes
+
+    - name: SSH public key for user "sergei" is placed in home dir
+      authorized_key:
+        user: sergei 
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+    - name: Selinux is disabled 
+      selinux:
+        state: disabled
+    
+    - name: Firewall is disabled 
+      systemd:
+        name: firewalld
+        state: stopped
+        enabled: no
+
+    - name: Time zone set to Warsaw   
+      timezone:
+        name: Europe/Warsaw
+
+    - name: OS and packages updated to latest version
+      yum:
+        name: '*'
+        state: latest
+
+    - name: System reboot if new kernel is available
+      block:
+      
+        - name: Check if new kernel is available
+          shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+          register: new_kernel
+
+        - name: Reboot
+          reboot:
+          when: ansible_kernel != new_kernel.stdout
+    
+
