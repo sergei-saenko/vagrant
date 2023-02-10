@@ -2,9 +2,9 @@
 # vi: set ft=ruby :
 
 # Tested on
-# Vagrant version: "2.3.0", "2.3.1"
+# Vagrant version: "2.3.4"
 # OS version: "MacOS Monterey 12.6"
-# VirtualBox version: 6.1.38, 6.1.42
+# VirtualBox version: 7.0.6
 # VmWare Fusion (macosx): not tested
 
 PRIVATE_NET="192.168.56."
