@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Post-provision for Vagrant VM's
+  hosts: all
   become: yes
   tasks:
   
@@ -14,16 +15,16 @@
         line: '%sudoroot ALL=(ALL) NOPASSWD: ALL'
         state: present
 
-    - name: User 'sergei' is created
+    - name: User 'user' is created
       user: 
-        name: sergei 
+        name: user 
         shell: /bin/bash
         groups: sudoroot  
         createhome: yes
 
-    - name: SSH public key for user "sergei" is placed in home dir
+    - name: SSH public key for your user is placed in home dir of vm's 'user'
       authorized_key:
-        user: sergei 
+        user: user 
         state: present
         key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 

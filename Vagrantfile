@@ -11,39 +11,41 @@ PRIVATE_NET="192.168.56."
 #DOMAIN=".local"
 
 servers =[
-	{
-		:hostname => "c1",
+	
+{
+		:hostname => "rocky9",
+		:box => "rockylinux/9",
+    :ip => PRIVATE_NET + "10",
+    :ram => 4096,
+		:cpunum => 2
+  },
+{
+		:hostname => "rocky8",
 		:box => "rockylinux/8",
 		#:box => "ubuntu/bionic64",
-    	#:hostname => "c1" + DOMAIN,
-    	:ip => PRIVATE_NET + "10",
+    #:hostname => "c1" + DOMAIN,
+    :ip => PRIVATE_NET + "20",
 		:ram => 1024,
 		:cpunum => 2
-  		# :ip_int => "1",
+  	# :ip_int => "1",
 		# :hdd_name => "db2_hdd.vdi",
-  		# :hdd_size => "10000"
-  },
-  {
-		:hostname => "c2",
+  	# :hdd_size => "10000"
+  }, 
+{
+		:hostname => "centos7",
 		:box => "centos/7",
-    	:ip => PRIVATE_NET + "20",
-    	:ram => 1024,
+    :ip => PRIVATE_NET + "30",
+    :ram => 1024,
 		:cpunum => 1
-  },
-	{
-		:hostname => "c3",
+  },	
+{
+		:hostname => "centos6",
 		:box => "generic/centos6",
-    	:ip => PRIVATE_NET + "30",
-    	:ram => 1024,
+    :ip => PRIVATE_NET + "40",
+    :ram => 1024,
 		:cpunum => 1
-  },
-	{
-		:hostname => "awx",
-		:box => "generic/centos9s",
-    	:ip => PRIVATE_NET + "40",
-    	:ram => 4096,
-		:cpunum => 2
   }
+ 
 ]
 
 
