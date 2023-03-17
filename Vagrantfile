@@ -11,39 +11,55 @@ PRIVATE_NET="192.168.56."
 #DOMAIN=".local"
 
 servers =[
-	{
-		:hostname => "c1",
-		:box => "rockylinux/8",
-		#:box => "ubuntu/bionic64",
-    	#:hostname => "c1" + DOMAIN,
+	
+{
+	:hostname => "rocky9",
+	:box => "rockylinux/9",
     	:ip => PRIVATE_NET + "10",
-		:ram => 1024,
-		:cpunum => 2
-  		# :ip_int => "1",
-		# :hdd_name => "db2_hdd.vdi",
-  		# :hdd_size => "10000"
+    	:ram => 4096,
+	:cpunum => 2
   },
-  {
-		:hostname => "c2",
-		:box => "centos/7",
+{
+	:hostname => "rocky8",
+	:box => "rockylinux/8",
+	#:box => "ubuntu/bionic64",
+    	#:hostname => "c1" + DOMAIN,
     	:ip => PRIVATE_NET + "20",
-    	:ram => 1024,
-		:cpunum => 1
-  },
-	{
-		:hostname => "c3",
-		:box => "generic/centos6",
+	:ram => 1024,
+	:cpunum => 2
+  	# :ip_int => "1",
+	# :hdd_name => "db2_hdd.vdi",
+  	# :hdd_size => "10000"
+  }, 
+{
+	:hostname => "centos7",
+	:box => "centos/7",
     	:ip => PRIVATE_NET + "30",
     	:ram => 1024,
-		:cpunum => 1
-  },
-	{
-		:hostname => "awx",
-		:box => "generic/centos9s",
+	:cpunum => 1
+  },	
+{
+	:hostname => "centos6",
+	:box => "generic/centos6",
     	:ip => PRIVATE_NET + "40",
-    	:ram => 4096,
-		:cpunum => 2
+    	:ram => 1024,
+	:cpunum => 1
+  },
+{
+	:hostname => "ubuntu16",
+	:box => "ubuntu/xenial64",
+    	:ip => PRIVATE_NET + "50",
+    	:ram => 1024,
+	:cpunum => 1
+  },
+{
+	:hostname => "rhel8",
+	:box => "generic/rhel8",
+    	:ip => PRIVATE_NET + "60",
+    	:ram => 1024,
+	:cpunum => 1
   }
+ 
 ]
 
 
