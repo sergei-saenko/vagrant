@@ -58,8 +58,28 @@ servers =[
     	:ip => PRIVATE_NET + "60",
     	:ram => 1024,
 	:cpunum => 1
-  }
- 
+  },
+  {
+	:hostname => "acontrol",
+	:box => "rockylinux/8",
+    :ip => PRIVATE_NET + "80",
+	:ram => 1024,
+	:cpunum => 2
+  }, 
+  {
+	:hostname => "aclient1",
+	:box => "rockylinux/8",
+    :ip => PRIVATE_NET + "81",
+	:ram => 1024,
+	:cpunum => 1
+  }, 
+  {
+	:hostname => "aclient2",
+	:box => "rockylinux/8",
+    :ip => PRIVATE_NET + "82",
+	:ram => 1024,
+	:cpunum => 1
+  } 
 ]
 
 
