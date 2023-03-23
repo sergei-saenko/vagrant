@@ -15,16 +15,16 @@ servers =[
 {
 	:hostname => "rocky9",
 	:box => "rockylinux/9",
-    	:ip => PRIVATE_NET + "10",
-    	:ram => 4096,
+    :ip => PRIVATE_NET + "10",
+    :ram => 4096,
 	:cpunum => 2
   },
 {
 	:hostname => "rocky8",
 	:box => "rockylinux/8",
 	#:box => "ubuntu/bionic64",
-    	#:hostname => "c1" + DOMAIN,
-    	:ip => PRIVATE_NET + "20",
+    #:hostname => "c1" + DOMAIN,
+    :ip => PRIVATE_NET + "20",
 	:ram => 1024,
 	:cpunum => 2
   	# :ip_int => "1",
@@ -34,32 +34,54 @@ servers =[
 {
 	:hostname => "centos7",
 	:box => "centos/7",
-    	:ip => PRIVATE_NET + "30",
-    	:ram => 1024,
+    :ip => PRIVATE_NET + "30",
+    :ram => 1024,
 	:cpunum => 1
   },	
 {
 	:hostname => "centos6",
 	:box => "generic/centos6",
-    	:ip => PRIVATE_NET + "40",
-    	:ram => 1024,
+    :ip => PRIVATE_NET + "40",
+    :ram => 1024,
 	:cpunum => 1
   },
 {
 	:hostname => "ubuntu16",
 	:box => "ubuntu/xenial64",
-    	:ip => PRIVATE_NET + "50",
-    	:ram => 1024,
+    :ip => PRIVATE_NET + "50",
+    :ram => 1024,
 	:cpunum => 1
   },
 {
 	:hostname => "rhel8",
 	:box => "generic/rhel8",
-    	:ip => PRIVATE_NET + "60",
-    	:ram => 1024,
+    :ip => PRIVATE_NET + "60",
+    :ram => 1024,
+	:cpunum => 1,
+	:playbook => "provisioning/initial_setup.yml"
+   },
+{
+	:hostname => "acontrol",
+	:box => "rockylinux/8",
+    :ip => PRIVATE_NET + "80",
+	:ram => 1024,
+	:cpunum => 2,
+	:playbook => "provisioning/initial_setup.yml"
+  }, 
+{
+	:hostname => "aclient1",
+	:box => "rockylinux/8",
+    :ip => PRIVATE_NET + "81",
+	:ram => 1024,
 	:cpunum => 1
-  }
- 
+  }, 
+{
+	:hostname => "aclient2",
+	:box => "rockylinux/8",
+    :ip => PRIVATE_NET + "82",
+	:ram => 1024,
+	:cpunum => 1
+  } 
 ]
 
 
@@ -71,31 +93,36 @@ Vagrant.configure("2") do |config|
 					node.vm.usable_port_range = (2200..2250)
 					node.vm.hostname = machine[:hostname]
 					node.vm.network "private_network", ip: machine[:ip]
+					#node.ssh.private_key_path = "./provisioning/files/id_ed25519"
 					# SSH Setup
 					# fqdn/ip for connection
 					#node.ssh.host = machine[:ip]
 					# for ssh-key based access via previosly added key
 					#node.ssh.private_key_path = "private_key"
 					# SSH login of the user
-					# node.ssh.username = "someuser"
+					#node.ssh.username = "someuser"
 					# SSH password
 					#node.ssh.password = "vagrant"
+					node.vm.provision "file", source: "./provisioning/files/id_ed25519", destination: "~/.ssh/id_ed25519"
+					node.vm.provision "file", source: "./provisioning/files/id_ed25519.pub", destination: "~/.ssh/id_ed25519.pub"
+					node.vm.provision "shell", inline: <<-SHELL
+    					cat /home/vagrant/.ssh/id_ed25519.pub >> /home/vagrant/.ssh/authorized_keys
+  					SHELL
 					node.vm.provider "virtualbox" do |vb|
 							vb.name = machine[:hostname]
 							vb.cpus = machine[:cpunum]
 							vb.customize ["modifyvm", :id, "--memory", machine[:ram]]
-							node.vm.provision :ansible do |ansible|
-								ansible.playbook = "provisioning/post.yml"
+					node.vm.provision :ansible do |ansible|
+							ansible.playbook =  "provisioning/initial_setup.yml"
 							end
-							# Adding HDD in case if it was specified in servers block (where VMs parameters defined)
-							if (!machine[:hdd_name].nil?)
-									unless File.exist?(machine[:hdd_name])
-											vb.customize ["createhd", "--filename", machine[:hdd_name], "--size", machine[:hdd_size]]
-							  end
+					# Adding HDD in case if it was specified in servers block (where VMs parameters defined)
+						if (!machine[:hdd_name].nil?)
+							unless File.exist?(machine[:hdd_name])
+							vb.customize ["createhd", "--filename", machine[:hdd_name], "--size", machine[:hdd_size]]
+						end
 							vb.customize ["storageattach", :id, "--storagectl", "SATA", "--port", 1, "--device", 0, "--type", "hdd", "--medium", machine[:hdd_name]]
-							end
-					
-			 end
-		 end
-	 end
-	end
+					end
+				end
+		 	end
+	 	end
+end
