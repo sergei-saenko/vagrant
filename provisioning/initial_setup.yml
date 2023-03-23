@@ -1,0 +1,77 @@
+---
+  - name: Post-provision for Vagrant VM's
+    hosts: all
+    become: yes
+    vars: 
+      ssh_private_key: "{{ lookup('file', lookup('env','HOME') + '/git/vagrant/provisioning/files/id_ed25519') }}"
+      ssh_remote_private_key_path: "/home/user/.ssh/id_ed25519"
+      ssh_public_key: "{{ lookup('file', lookup('env','HOME') + '/git/vagrant/provisioning/files/id_ed25519.pub') }}"
+      ssh_remote_public_key_path: "/home/user/.ssh/id_ed25519.pub"
+
+    tasks:
+
+      - name: Selinux is disabled 
+        selinux:
+          state: disabled
+      
+      - name: Firewall is disabled 
+        systemd:
+          name: firewalld
+          state: stopped
+          enabled: no
+  
+      - name: Time zone set to Warsaw   
+        timezone:
+          name: Europe/Warsaw
+  
+#      - name: OS and packages updated to latest version
+#        yum:
+#          name: '*'
+#          state: latest
+      
+      - name: Packages to install
+        yum:
+          name:
+            - vim
+            - bind-utils
+            - dos2unix
+            - tmux
+            - ansible-core
+          state: latest
+
+      - name: HOSTS adding to /etc/hosts
+        blockinfile:
+          path: /etc/hosts
+          block: |
+            {{ item.ip }} {{ item.name }}
+          marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+        loop:
+          - { name: acontrol, ip: 192.168.56.80 }
+          - { name: aclient1, ip: 192.168.56.81 }
+          - { name: aclient2, ip: 192.168.56.82 }
+      
+      - name: LOCAL HOSTS adding to /etc/hosts  #'sudo su -' should work without password on your local machine
+        blockinfile:
+          path: /etc/hosts
+          block: |
+            {{ item.ip }} {{ item.name }}
+          marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+        loop:
+          - { name: acontrol, ip: 192.168.56.80 }
+          - { name: aclient1, ip: 192.168.56.81 }
+          - { name: aclient2, ip: 192.168.56.82 }
+        delegate_to: localhost
+
+      - name: System reboot if new kernel is available
+        block:
+        
+          - name: Check if new kernel is available
+            shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+            register: new_kernel
+  
+          - name: Reboot
+            reboot:
+            when: ansible_kernel != new_kernel.stdout 
+      
+  
+  
