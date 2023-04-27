@@ -43,16 +43,8 @@
             {{ item.ip }} {{ item.name }}
           marker: "# {mark} ANSIBLE MANAGED BLOCK for VAGRANT VM {{ item.name }}"
         loop:
-          - { name: rocky9, ip: 192.168.56.10 }
-          - { name: rocky8, ip: 192.168.56.20 }
-          - { name: rocky8nfs, ip: 192.168.56.21 }
-          - { name: centos7, ip: 192.168.56.30 }
-          - { name: centos6, ip: 192.168.56.40 }
-          - { name: ubuntu16, ip: 192.168.56.50 }
-          - { name: rhel8, ip: 192.168.56.60 }
-          - { name: acontrol, ip: 192.168.56.80 }
-          - { name: aclient1, ip: 192.168.56.81 }
-          - { name: aclient2, ip: 192.168.56.82 }
+          - { name: nfs-server, ip: 192.168.56.21 }
+          - { name: client1, ip: 192.168.56.22 }
         delegate_to: localhost
 
       - name: System reboot if new kernel is available

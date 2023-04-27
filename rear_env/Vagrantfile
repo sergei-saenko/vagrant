@@ -13,92 +13,25 @@ PRIVATE_NET="192.168.56."
 servers =[
 	
 {
-	:hostname => "rocky9",
-	:box => "rockylinux/9",
-    :ip => PRIVATE_NET + "10",
-    :ram => 4096,
-	:cpunum => 2,
-	:playbook => "provisioning/initial_setup.yml"
-  },
-{
-	:hostname => "rocky8",
-	:box => "rockylinux/8",
-	#:box => "ubuntu/bionic64",
-    #:hostname => "c1" + DOMAIN,
-    :ip => PRIVATE_NET + "20",
-	:ram => 1024,
-	:cpunum => 2,
-	:playbook => "provisioning/initial_setup.yml"
-  	# :ip_int => "1",
-	# :hdd_name => "db2_hdd.vdi",
-  	# :hdd_size => "10000"
-  }, 
-{
-	:hostname => "rocky8nfs",
+	:hostname => "nfs-server",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "21",
 	:ram => 1024,
 	:cpunum => 2,
-	:hdd_name => "r8nfs_hdd.vdi",
+	:hdd_name => "r8server_nfs_hdd.vdi",
   :hdd_size => "20000",
 	:playbook => "provisioning/initial_setup.yml"
   }, 
-{
-	:hostname => "centos7",
-	:box => "centos/7",
-    :ip => PRIVATE_NET + "30",
-    :ram => 1024,
-	:cpunum => 1,
-	:playbook => "empty"
-  },	
-{
-	:hostname => "centos6",
-	:box => "generic/centos6",
-    :ip => PRIVATE_NET + "40",
-    :ram => 1024,
-	:cpunum => 1,
-	:playbook => "empty"
-  },
-{
-	:hostname => "ubuntu16",
-	:box => "ubuntu/xenial64",
-    :ip => PRIVATE_NET + "50",
-    :ram => 1024,
-	:cpunum => 1,
-	:playbook => "empty"
-  },
-{
-	:hostname => "rhel8",
-	:box => "generic/rhel8",
-    :ip => PRIVATE_NET + "60",
-    :ram => 1024,
-	:cpunum => 1,
-	:playbook => "empty"
-   },
-{
-	:hostname => "acontrol",
-	:box => "rockylinux/8",
-    :ip => PRIVATE_NET + "80",
-	:ram => 1024,
-	:cpunum => 2,
-	:playbook => "provisioning/initial_setup.yml"
-  }, 
-{
-	:hostname => "aclient1",
-	:box => "rockylinux/8",
-    :ip => PRIVATE_NET + "81",
-	:ram => 1024,
-	:cpunum => 1,
-	:playbook => "provisioning/initial_setup.yml"
-  }, 
-{
-	:hostname => "aclient2",
-	:box => "rockylinux/8",
-    :ip => PRIVATE_NET + "82",
-	:ram => 1024,
-	:cpunum => 1,
-	:playbook => "provisioning/initial_setup.yml"
-  } 
+	{
+		:hostname => "client1",
+		:box => "rockylinux/8",
+		:ip => PRIVATE_NET + "22",
+		:ram => 1024,
+		:cpunum => 2,
+		:hdd_name => "r8client_nfs_hdd.vdi",
+		:hdd_size => "20000",
+		:playbook => "provisioning/initial_setup.yml"
+		}
 ]
 
 
