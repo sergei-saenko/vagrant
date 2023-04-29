@@ -11,7 +11,7 @@ VirtualBox 7.0.6
 Vagrant version: 2.3.4 <br>
 Vagrant plugins:
   - vagrant-vbguest (0.21.0, global)
-  - vagrant-hostsupdater (1.2.4, global)
+  - vagrant-hostsupdater (1.2.4, global) <br>
 Vagrant Boxes:
  + centos/7         (virtualbox, 2004.01)
  + generic/centos6 (virtualbox, 4.1.12)
