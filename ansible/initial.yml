@@ -1,7 +1,6 @@
 ---
   - name: Post-provision for Vagrant VM's
     hosts: all
-    user: vagrant
     become: yes
     
 
@@ -36,16 +35,21 @@
           state: latest
         ignore_errors: true
 
-      - name: HOSTS adding to /etc/hosts
+      - name: Modification of /etc/hosts on VIRTUAL machines
         blockinfile:
           path: /etc/hosts
           block: |
             {{ item.ip }} {{ item.name }}
           marker: "# {mark} ANSIBLE MANAGED BLOCK for VAGRANT VM {{ item.name }}"
         loop:
+          - { name: rocky9, ip: 192.168.56.10 }
+          - { name: rocky8, ip: 192.168.56.20 }
+          - { name: centos7, ip: 192.168.56.30 }
+          - { name: centos6, ip: 192.168.56.40 }
+          - { name: ubuntu16, ip: 192.168.56.50 }
+          - { name: rhel8, ip: 192.168.56.60 }
           - { name: nfs-server, ip: 192.168.56.21 }
           - { name: client1, ip: 192.168.56.22 }
-        delegate_to: localhost
 
       - name: System reboot if new kernel is available
         block:

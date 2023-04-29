@@ -8,6 +8,7 @@
 # VmWare Fusion (macosx): not tested
 
 PRIVATE_NET="192.168.56."
+ANSIBLEPLAY="../ansible/"
 #DOMAIN=".local"
 
 servers =[
@@ -18,20 +19,20 @@ servers =[
   :ip => PRIVATE_NET + "21",
 	:ram => 1024,
 	:cpunum => 2,
-	:hdd_name => "r8server_nfs_hdd.vdi",
-  :hdd_size => "20000",
-	:playbook => "provisioning/initial_setup.yml"
+	#:hdd_name => "r8server_nfs_hdd.vdi",
+  #:hdd_size => "20000",
+	:playbook => ANSIBLEPLAY + "initial.yml"
   }, 
 	{
-		:hostname => "client1",
-		:box => "rockylinux/8",
-		:ip => PRIVATE_NET + "22",
-		:ram => 1024,
-		:cpunum => 2,
-		:hdd_name => "r8client_nfs_hdd.vdi",
-		:hdd_size => "20000",
-		:playbook => "provisioning/initial_setup.yml"
-		}
+	:hostname => "client1",
+	:box => "rockylinux/8",
+	:ip => PRIVATE_NET + "22",
+	:ram => 1024,
+	:cpunum => 2,
+	#	:hdd_name => "r8client_nfs_hdd.vdi",
+	#	:hdd_size => "20000",
+	:playbook => ANSIBLEPLAY + "initial.yml"
+	}
 ]
 
 

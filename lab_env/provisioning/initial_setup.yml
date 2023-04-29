@@ -36,7 +36,7 @@
           state: latest
         ignore_errors: true
 
-      - name: HOSTS adding to /etc/hosts
+      - name: Modification of /etc/hosts on VIRTUAL machines
         blockinfile:
           path: /etc/hosts
           block: |
@@ -49,7 +49,6 @@
           - { name: centos6, ip: 192.168.56.40 }
           - { name: ubuntu16, ip: 192.168.56.50 }
           - { name: rhel8, ip: 192.168.56.60 }
-        delegate_to: localhost
 
       - name: System reboot if new kernel is available
         block:

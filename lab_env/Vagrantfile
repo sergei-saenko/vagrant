@@ -8,6 +8,7 @@
 # VmWare Fusion (macosx): not tested
 
 PRIVATE_NET="192.168.56."
+ANSIBLEPLAY="../ansible/"
 #DOMAIN=".local"
 
 servers =[
@@ -18,20 +19,19 @@ servers =[
   :ip => PRIVATE_NET + "10",
   :ram => 4096,
 	:cpunum => 2,
-	:playbook => "provisioning/initial_setup.yml"
+	:playbook => ANSIBLEPLAY + "initial.yml"
   },
 {
 	:hostname => "rocky8",
 	:box => "rockylinux/8",
-	#:box => "ubuntu/bionic64",
-    #:hostname => "c1" + DOMAIN,
-    :ip => PRIVATE_NET + "20",
+  #:hostname => "c1" + DOMAIN,
+  :ip => PRIVATE_NET + "20",
 	:ram => 1024,
 	:cpunum => 2,
-	:playbook => "provisioning/initial_setup.yml"
-  	# :ip_int => "1",
+	:playbook => ANSIBLEPLAY + "initial.yml"
+  # :ip_int => "1",
 	# :hdd_name => "db2_hdd.vdi",
-  	# :hdd_size => "10000"
+  # :hdd_size => "10000"
   }, 
 {
 	:hostname => "centos7",
@@ -39,7 +39,7 @@ servers =[
   :ip => PRIVATE_NET + "30",
   :ram => 1024,
 	:cpunum => 1,
-	:playbook => "provisioning/initial_setup.yml"
+	:playbook => ANSIBLEPLAY + "initial.yml"
   },	
 {
 	:hostname => "centos6",
@@ -47,23 +47,23 @@ servers =[
   :ip => PRIVATE_NET + "40",
   :ram => 1024,
 	:cpunum => 1,
-	:playbook => "provisioning/initial_setup.yml"
+	:playbook => ANSIBLEPLAY + "initial.yml"
   },
 {
 	:hostname => "ubuntu16",
 	:box => "ubuntu/xenial64",
-    :ip => PRIVATE_NET + "50",
-    :ram => 1024,
+  :ip => PRIVATE_NET + "50",
+  :ram => 1024,
 	:cpunum => 1,
-	:playbook => "provisioning/initial_setup.yml"
+	:playbook => ANSIBLEPLAY + "initial.yml"
   },
 {
 	:hostname => "rhel8",
 	:box => "generic/rhel8",
-    :ip => PRIVATE_NET + "60",
-    :ram => 1024,
+  :ip => PRIVATE_NET + "60",
+  :ram => 1024,
 	:cpunum => 1,
-	:playbook => "provisioning/initial_setup.yml"
+	:playbook => ANSIBLEPLAY + "initial.yml"
    }
 ]
 
