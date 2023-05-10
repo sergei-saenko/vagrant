@@ -141,7 +141,25 @@
         loop:
           - unbound
 
-  
+      - name: Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
+        copy:
+          dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+          content: |
+                [main]
+                dns=none
+      
+      - name: Reload NetworkManager service
+        systemd:
+          name: NetworkManager
+          state: reloaded
+
+      - name: Modification of /etc/resolv.conf
+        copy:
+          dest: /etc/resolv.conf
+          content: |
+                search local
+                nameserver 192.168.56.250
+                
       - name: Reboot
         reboot:
         
