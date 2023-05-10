@@ -14,57 +14,15 @@ ANSIBLEPLAY="../ansible/"
 servers =[
 	
 {
-	:hostname => "rocky9-vag",
-	:box => "rockylinux/9",
-  :ip => PRIVATE_NET + "10",
-  :ram => 4096,
-	:cpunum => 2,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  },
-{
-	:hostname => "rocky8-vag",
+	:hostname => "dns-vag",
 	:box => "rockylinux/8",
-  #:hostname => "c1" + DOMAIN,
-  :ip => PRIVATE_NET + "20",
+  :ip => PRIVATE_NET + "250",
 	:ram => 1024,
-	:cpunum => 2,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  # :ip_int => "1",
-	# :hdd_name => "db2_hdd.vdi",
-  # :hdd_size => "10000"
-  }, 
-{
-	:hostname => "centos7-vag",
-	:box => "centos/7",
-  :ip => PRIVATE_NET + "30",
-  :ram => 1024,
 	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  },	
-{
-	:hostname => "centos6-vag",
-	:box => "generic/centos6",
-  :ip => PRIVATE_NET + "40",
-  :ram => 1024,
-	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  },
-{
-	:hostname => "ubuntu16-vag",
-	:box => "ubuntu/xenial64",
-  :ip => PRIVATE_NET + "50",
-  :ram => 1024,
-	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  },
-{
-	:hostname => "rhel8-vag",
-	:box => "generic/rhel8",
-  :ip => PRIVATE_NET + "60",
-  :ram => 1024,
-	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-   }
+	#:hdd_name => "r8server_nfs_hdd.vdi",
+  #:hdd_size => "20000",
+	:playbook => ANSIBLEPLAY + "infra.yml"
+  }
 ]
 
 
@@ -103,6 +61,6 @@ Vagrant.configure("2") do |config|
 							#vb.customize ["storageattach", :id, "--storagectl", "SATA", "--port", 1, "--device", 0, "--type", "hdd", "--medium", machine[:hdd_name]]
 							vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", machine[:hdd_name]]
 					end
-				end
 		 	end
+	 	end
 end
