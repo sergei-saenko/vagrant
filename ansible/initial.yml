@@ -30,26 +30,27 @@
             - vim
             - bind-utils
             - dos2unix
-            - tmux
-            - ansible-core
           state: latest
         ignore_errors: true
 
-      - name: Modification of /etc/hosts on VIRTUAL machines
-        blockinfile:
-          path: /etc/hosts
-          block: |
-            {{ item.ip }} {{ item.name }}
-          marker: "# {mark} ANSIBLE MANAGED BLOCK for VAGRANT VM {{ item.name }}"
-        loop:
-          - { name: rocky9, ip: 192.168.56.10 }
-          - { name: rocky8, ip: 192.168.56.20 }
-          - { name: centos7, ip: 192.168.56.30 }
-          - { name: centos6, ip: 192.168.56.40 }
-          - { name: ubuntu16, ip: 192.168.56.50 }
-          - { name: rhel8, ip: 192.168.56.60 }
-          - { name: nfs-server, ip: 192.168.56.21 }
-          - { name: client1, ip: 192.168.56.22 }
+      - name: Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
+        copy:
+          dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+          content: |
+                [main]
+                dns=none
+      
+      - name: Reload NetworkManager service
+        systemd:
+          name: NetworkManager
+          state: reloaded
+
+      - name: Modification of /etc/resolv.conf
+        copy:
+          dest: /etc/resolv.conf
+          content: |
+                search local
+                nameserver 192.168.56.250
 
       - name: System reboot if new kernel is available
         block:
@@ -60,4 +61,4 @@
   
           - name: Reboot
             reboot:
-            when: ansible_kernel != new_kernel.stdout 
+            #when: ansible_kernel != new_kernel.stdout 

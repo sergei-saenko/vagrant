@@ -14,7 +14,7 @@ ANSIBLEPLAY="../ansible/"
 servers =[
 	
 {
-	:hostname => "nfs-server",
+	:hostname => "nfs-server-vag",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "21",
 	:ram => 1024,
@@ -24,7 +24,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "initial.yml"
   }, 
 	{
-	:hostname => "client1",
+	:hostname => "nfs-client-vag",
 	:box => "rockylinux/8",
 	:ip => PRIVATE_NET + "22",
 	:ram => 1024,
@@ -54,6 +54,7 @@ Vagrant.configure("2") do |config|
 							vb.name = machine[:hostname]
 							vb.cpus = machine[:cpunum]
 							vb.customize ["modifyvm", :id, "--memory", machine[:ram]]
+					end
 					node.vm.provision :ansible do |ansible|
 							ansible.playbook =  machine[:playbook] #"provisioning/initial_setup.yml"
 							end
@@ -67,5 +68,4 @@ Vagrant.configure("2") do |config|
 					end
 				end
 		 	end
-	 	end
 end
