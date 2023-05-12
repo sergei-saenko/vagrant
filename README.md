@@ -11,7 +11,6 @@ VirtualBox 7.0.6
 Vagrant version: 2.3.4 <br>
 Vagrant plugins:
   - vagrant-vbguest (0.21.0)
-  - vagrant-hostsupdater (1.2.4)
   - vagrant-hostmanager (1.8.9) <br> 
   
 Vagrant Boxes:
@@ -19,3 +18,9 @@ Vagrant Boxes:
  + generic/centos6 (virtualbox, 4.1.12)
  + generic/centos9s (virtualbox, 4.1.14)
  + rockylinux/8     (virtualbox, 5.0.0) <br>
+
+
+
+### User ssh config (add following strings to .ssh/config file in your home dir):
+Host * <br>
+	StrictHostKeyChecking no
