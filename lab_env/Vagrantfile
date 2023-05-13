@@ -25,7 +25,7 @@ servers =[
 	:hostname => "rocky8-vag",
 	:box => "rockylinux/8",
   #:hostname => "c1" + DOMAIN,
-  :ip => PRIVATE_NET + "20",
+  :ip => PRIVATE_NET + "11",
 	:ram => 1024,
 	:cpunum => 2,
 	:playbook => ANSIBLEPLAY + "initial.yml"
@@ -36,7 +36,7 @@ servers =[
 {
 	:hostname => "centos7-vag",
 	:box => "centos/7",
-  :ip => PRIVATE_NET + "30",
+  :ip => PRIVATE_NET + "12",
   :ram => 1024,
 	:cpunum => 1,
 	:playbook => ANSIBLEPLAY + "initial.yml"
@@ -44,7 +44,7 @@ servers =[
 {
 	:hostname => "centos6-vag",
 	:box => "generic/centos6",
-  :ip => PRIVATE_NET + "40",
+  :ip => PRIVATE_NET + "13",
   :ram => 1024,
 	:cpunum => 1,
 	:playbook => ANSIBLEPLAY + "initial.yml"
@@ -52,7 +52,7 @@ servers =[
 {
 	:hostname => "ubuntu16-vag",
 	:box => "ubuntu/xenial64",
-  :ip => PRIVATE_NET + "50",
+  :ip => PRIVATE_NET + "14",
   :ram => 1024,
 	:cpunum => 1,
 	:playbook => ANSIBLEPLAY + "initial.yml"
@@ -60,7 +60,7 @@ servers =[
 {
 	:hostname => "rhel8-vag",
 	:box => "generic/rhel8",
-  :ip => PRIVATE_NET + "60",
+  :ip => PRIVATE_NET + "15",
   :ram => 1024,
 	:cpunum => 1,
 	:playbook => ANSIBLEPLAY + "initial.yml"
@@ -70,6 +70,8 @@ servers =[
 
 Vagrant.configure("2") do |config|
 	config.vm.synced_folder ".", "/vagrant", disabled: true
+	config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
 		servers.each do |machine|	
 			config.vm.define machine[:hostname] do |node|
 					node.vm.box = machine[:box]

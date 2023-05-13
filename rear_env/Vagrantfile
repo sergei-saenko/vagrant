@@ -16,7 +16,7 @@ servers =[
 {
 	:hostname => "nfs-server-vag",
 	:box => "rockylinux/8",
-  :ip => PRIVATE_NET + "21",
+  :ip => PRIVATE_NET + "20",
 	:ram => 1024,
 	:cpunum => 2,
 	#:hdd_name => "r8server_nfs_hdd.vdi",
@@ -26,7 +26,7 @@ servers =[
 	{
 	:hostname => "nfs-client-vag",
 	:box => "rockylinux/8",
-	:ip => PRIVATE_NET + "22",
+	:ip => PRIVATE_NET + "21",
 	:ram => 1024,
 	:cpunum => 2,
 	#	:hdd_name => "r8client_nfs_hdd.vdi",
@@ -38,6 +38,8 @@ servers =[
 
 Vagrant.configure("2") do |config|
 	config.vm.synced_folder ".", "/vagrant", disabled: true
+	config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
 		servers.each do |machine|	
 			config.vm.define machine[:hostname] do |node|
 					node.vm.box = machine[:box]
