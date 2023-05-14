@@ -1,0 +1,131 @@
+---
+  - name: Post-provision for Vagrant VM's. RHCE lab env
+    hosts: all
+    become: yes
+    vars:
+      guestuser: vagrant
+    
+
+    tasks:
+      - name: Selinux is disabled 
+        selinux:
+          state: disabled
+      
+      - name: Firewall is disabled 
+        systemd:
+          name: firewalld
+          state: stopped
+          enabled: no
+  
+      - name: Time zone set to Warsaw   
+        timezone:
+          name: Europe/Warsaw
+
+      - name: Colorize prompt for user
+        blockinfile:
+          path: /home/{{ guestuser }}/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][\[\e[0m\]\[\033[1;33;1;36m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+      
+      - name: Colorize prompt for root
+        blockinfile:
+          path: /root/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][\[\e[0m\]\[\033[1;33;1;33m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+
+
+      - name: Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
+        copy:
+          dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+          content: |
+                [main]
+                dns=none
+      
+      - name: Reload NetworkManager service
+        systemd:
+          name: NetworkManager
+          state: reloaded
+
+      - name: Modification of /etc/resolv.conf
+        copy:
+          dest: /etc/resolv.conf
+          content: |
+                search local
+                nameserver 8.8.8.8
+
+#      - name: OS and packages updated to latest version
+#        yum:
+#          name: '*'
+#          state: latest
+      
+  
+
+      - name: Packages to install
+        yum:
+          name:
+            - vim
+            - bind-utils
+            - dos2unix
+          state: latest
+        ignore_errors: true
+
+      - name: Install ansible packages
+        yum:
+          name: ansible-core
+          state: latest
+        when: inventory_hostname == 'control'
+
+
+      - name: Ansible User
+        block:
+
+          - name: Create user ansible
+            user: 
+              name: ansible
+
+          - name: Colorize prompt for user
+            blockinfile:
+              path: /home/ansible/.bashrc
+              block: |
+                PS1="\[\e[0;1;2m\][\[\e[0m\]\[\033[1;33;1;32m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+
+          - name: Add public SSH key to authorized_keys file
+            authorized_key:
+              user: ansible
+              key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+              state: present
+              exclusive: true
+
+          - name: Add private SSH key to user's home directory
+            copy:
+              src: ~/.ssh/id_rsa
+              dest: /home/ansible/.ssh/id_rsa
+              owner: ansible
+              mode: '0600'
+
+          - name: Sudo rights for ansible user
+            blockinfile:
+              path: /etc/sudoers.d/ansible
+              create: true
+              block: |
+                %ansible ALL=(ALL) NOPASSWD: ALL
+          
+          - name: SSH client config for ansible user
+            blockinfile:
+              path: /home/ansible/.ssh/config
+              create: true
+              block: |
+                Host *
+                   StrictHostKeyChecking no
+
+
+      - name: System reboot if new kernel is available
+        block:
+        
+          - name: Check if new kernel is available
+            shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+            register: new_kernel
+  
+          - name: Reboot
+            reboot:
+            when: ansible_kernel != new_kernel.stdout 

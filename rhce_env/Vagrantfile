@@ -8,35 +8,35 @@
 # VmWare Fusion (macosx): not tested
 
 PRIVATE_NET="192.168.56."
-ANSIBLEPLAY="../ansible/"
+ANSIBLEPLAY="../rhce_env/"
 #DOMAIN=".local"
 
 servers =[
 	
 {
 	#:hostname => "control" + DOMAIN,
-	:hostname => "control-vag",
+	:hostname => "control",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "30",
 	:ram => 1024,
 	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
+	:playbook => ANSIBLEPLAY + "rhce_nodes.yml"
   },
 {
-	:hostname => "node1-vag",
+	:hostname => "ansible1",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "31",
 	:ram => 1024,
 	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
+	:playbook => ANSIBLEPLAY + "rhce_nodes.yml"
   },
 	{
-	:hostname => "node2-vag",
+	:hostname => "ansible2",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "32",
 	:ram => 1024,
 	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
+	:playbook => ANSIBLEPLAY + "rhce_nodes.yml"
   }
 ]
 

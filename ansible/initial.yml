@@ -66,6 +66,7 @@
           content: |
                 search local
                 nameserver 192.168.56.250
+                nameserver 8.8.8.8
 
       - name: System reboot if new kernel is available
         block:
