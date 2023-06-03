@@ -129,6 +129,7 @@
                    ##==VMWARE pacemaker cluster
                    local-data: "z1.local IN A 172.16.137.198"
                    local-data: "z2.local IN A 172.16.137.203"
+                   local-data: "zapc.local IN A 172.16.137.204"
                    local-data: "db.local IN A 172.16.137.205"
 
                 	include: /etc/unbound/local.d/*.conf
