@@ -127,7 +127,7 @@
                    local-data: "r8nfs.local IN A 172.16.137.188"
 
                    ##==VMWARE pacemaker cluster
-                   local-data: "z1.local IN A 172.16.137.204"
+                   local-data: "z1.local IN A 172.16.137.198"
                    local-data: "z2.local IN A 172.16.137.203"
                    local-data: "db.local IN A 172.16.137.205"
 
