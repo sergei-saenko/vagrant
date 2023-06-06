@@ -55,3 +55,6 @@ Thumbs.db
 # Virtual Box related files
 *.vdi
 *.vmdk
+
+#vscode related files
+.vscode/
