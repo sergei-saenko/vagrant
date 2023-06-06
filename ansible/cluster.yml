@@ -58,12 +58,12 @@
                     nameserver 192.168.56.250
                     nameserver 8.8.8.8
 
-          - name: ALL HOSTS - OS update
-            yum:
-              name: '*'
-              state: latest
+         # - name: ALL HOSTS - OS update
+          #  yum:
+           #   name: '*'
+            #  state: latest
 
-          - name: INIITIAL - Check if new kernel is available
+          - name: ALL HOSTS - Check if new kernel is available
             shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
             register: new_kernel
     
@@ -71,7 +71,7 @@
             reboot:
             when: ansible_kernel != new_kernel.stdout 
         
-          - name: ALL HOSTS - Packages for minimal installation
+          - name: ALL HOSTS - Important package installation
             yum:
               name:
                 - vim
@@ -83,7 +83,6 @@
                 - wget
                 - python3-pexpect
               state: present
-            ignore_errors: true
 ## ALL HOSTS PART: Ending
 
 ## BACKEND HOST PART: Begining
@@ -115,29 +114,29 @@
               state: started
               enabled: yes
 
-          - name: BACKEND - Check if mysql_secure_installation has been executed
+          - name: BACKEND - Check if mysql_secure_installation has been executed before
             stat:
-              path: /var/lib/mysql/installation_flag.file
+              path: /var/lib/mysql/mysql_secure_installation.done
             register: flag_file
 
           - name: BACKEND - Run mysql_secure_installation
             expect:
               command: mysql_secure_installation
               responses:
-                "Enter current password for root (enter for none):": "\r"
-                "Set root password? [Y/n]": "Y"
-                "New password:": "explorer\r"
-                "Re-enter new password:": "explorer\r"
-                "Remove anonymous users? [Y/n]": "Y\r"
-                "Disallow root login remotely? [Y/n]": "Y\r"
-                "Remove test database and access to it? [Y/n]": "Y\r"
-                "Reload privilege tables now?": "Y\r"
-            #no_log: true    
+                (.*)current password for root(.*): ''
+                (.*)et root password(.*): 'Y'
+                (.*)ew password(.*): 'explorer'
+                (.*)e-enter new password(.*): 'explorer'
+                (.*)emove anonymous users(.*): 'Y'
+                (.*)isallow root login remotely(.*): 'Y'
+                (.*)emove test database and access to it(.*): 'Y'
+                (.*)eload privilege tables now(.*): 'Y'
+            no_log: true    
             when: flag_file.stat.exists == false
 
-          - name: BACKEND - Create flag file
+          - name: BACKEND - Create flag file to prevent more execution of mysql_secure_installation
             file:
-              path: /var/lib/mysql/installation_flag.file
+              path: /var/lib/mysql/mysql_secure_installation.done
               state: touch
             when: flag_file.stat.exists == false
 
