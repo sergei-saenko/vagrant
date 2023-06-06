@@ -1,0 +1,76 @@
+---
+  - name: Post-provision for Vagrant VM's
+    hosts: all
+    become: yes
+    vars:
+      guestuser: vagrant
+    
+
+    tasks:
+
+    - block: Initial OS configuration
+      - name: Selinux is disabled 
+        selinux:
+          state: disabled
+  
+      - name: Time zone set to Warsaw   
+        timezone:
+          name: Europe/Warsaw
+
+      - name: Colorize prompt for user
+        blockinfile:
+          path: /home/{{ guestuser }}/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][`sudo virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;36m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+            
+      - name: Colorize prompt for root
+        blockinfile:
+          path: /root/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][`virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;33m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+
+       - name: Check if new kernel is available
+          shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+          register: new_kernel
+  
+       - name: Reboot
+          reboot:
+          when: ansible_kernel != new_kernel.stdout 
+
+      - name: OS and packages updated to latest version
+        yum:
+          name: '*'
+          state: latest
+      
+      - name: Packages for minimal installation
+        yum:
+          name:
+            - vim
+            - bind-utils
+            - dos2unix
+          state: latest
+        ignore_errors: true
+
+      - name: Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
+        copy:
+          dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+          content: |
+                [main]
+                dns=none
+      
+      - name: Reload NetworkManager service
+        systemd:
+          name: NetworkManager
+          state: reloaded
+
+      - name: Modification of /etc/resolv.conf
+        copy:
+          dest: /etc/resolv.conf
+          content: |
+                search local
+                nameserver 192.168.56.250
+                nameserver 8.8.8.8
+
+
+        
+         

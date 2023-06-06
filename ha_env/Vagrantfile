@@ -8,63 +8,35 @@
 # VmWare Fusion (macosx): not tested
 
 PRIVATE_NET="192.168.56."
-ANSIBLEPLAY="../ansible/"
-#DOMAIN=".local"
+ANSIBLEPLAY="../ha_env/"
+DOMAIN=".local"
 
 servers =[
 	
 {
-	:hostname => "rocky9-vag",
-	:box => "rockylinux/9",
-  :ip => PRIVATE_NET + "10",
-  :ram => 4096,
-	:cpunum => 2,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  },
-{
-	:hostname => "rocky8-vag",
+	:hostname => "z1" + DOMAIN,
 	:box => "rockylinux/8",
-  #:hostname => "c1" + DOMAIN,
   :ip => PRIVATE_NET + "11",
 	:ram => 1024,
-	:cpunum => 2,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  # :ip_int => "1",
-	# :hdd_name => "db2_hdd.vdi",
-  # :hdd_size => "10000"
+	:cpunum => 1,
+	:playbook => ANSIBLEPLAY + "cluster_node.yml"
   }, 
 {
-	:hostname => "centos7-vag",
-	:box => "centos/7",
-  :ip => PRIVATE_NET + "12",
-  :ram => 1024,
-	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  },	
+		:hostname => "z2" + DOMAIN,
+		:box => "rockylinux/8",
+		:ip => PRIVATE_NET + "11",
+		:ram => 1024,
+		:cpunum => 1,
+		:playbook => ANSIBLEPLAY + "cluster_node.yml"
+		},
 {
-	:hostname => "centos6-vag",
-	:box => "generic/centos6",
-  :ip => PRIVATE_NET + "13",
-  :ram => 1024,
+	:hostname => "db" + DOMAIN,
+	:box => "rockylinux/8",
+  :ip => PRIVATE_NET + "11",
+	:ram => 1024,
 	:cpunum => 1,
 	:playbook => ANSIBLEPLAY + "initial.yml"
-  },
-{
-	:hostname => "ubuntu16-vag",
-	:box => "ubuntu/xenial64",
-  :ip => PRIVATE_NET + "14",
-  :ram => 1024,
-	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-  },
-{
-	:hostname => "rhel8-vag",
-	:box => "generic/rhel8",
-  :ip => PRIVATE_NET + "15",
-  :ram => 1024,
-	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
-   }
+  }
 ]
 
 

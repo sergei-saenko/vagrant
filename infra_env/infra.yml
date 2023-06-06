@@ -117,11 +117,17 @@
                    local-data: "nfs-server-vag.local IN A 192.168.56.20"
                    local-data: "nfs-client-vag.local IN A 192.168.56.21"
                    
-                    #VAGRANT RHCE cert env
+                   ##VAGRANT RHCE cert env
                    local-data: "control-vag.local IN A 192.168.56.30"
                    local-data: "node1-vag.local IN A 192.168.56.31"
                    local-data: "node2-vag.local IN A 192.168.56.32"
 
+                   ##VAGRANT cluster
+                   local-data: "cluster-vag.local IN A 192.168.56.40"
+                   local-data: "z1-vag.local IN A 192.168.56.41"
+                   local-data: "z2-vag.local IN A 192.168.56.42"
+                   local-data: "db-vag.local IN A 192.168.56.43"
+                   
                    ##==VMWARE fusion virtual machines
                    local-data: "r8wp.local IN A 172.16.137.192"
                    local-data: "r8nfs.local IN A 172.16.137.188"
