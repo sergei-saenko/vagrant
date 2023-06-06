@@ -1,6 +1,12 @@
 # VAGRANT
 One-command virtual environment boot up
 
+## TO-DO
+Complete cluster.yml.<br>
+Need to be done following:
+- complete mariadb part
+- complete cluster creation part
+
 ## Tested environment
 OS Versions: MacOSX (Monterey 12.6, Ventura 13.1)
 
@@ -24,3 +30,8 @@ Vagrant Boxes:
 ### User ssh config (add following strings to .ssh/config file in your home dir):
 Host * <br>
 	StrictHostKeyChecking no
+
+
+
+
+
