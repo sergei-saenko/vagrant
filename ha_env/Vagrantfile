@@ -8,34 +8,35 @@
 # VmWare Fusion (macosx): not tested
 
 PRIVATE_NET="192.168.56."
-ANSIBLEPLAY="../ha_env/"
+ANSIBLEPLAY="../ansible/"
 DOMAIN=".local"
 
 servers =[
 	
 {
-	:hostname => "z1" + DOMAIN,
+	:hostname => "z1-vag",	
+	#:hostname => "z1-vag" + DOMAIN,
 	:box => "rockylinux/8",
-  :ip => PRIVATE_NET + "11",
+  :ip => PRIVATE_NET + "41",
 	:ram => 1024,
 	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "cluster_node.yml"
+	:playbook => ANSIBLEPLAY + "cluster.yml"
   }, 
 {
-		:hostname => "z2" + DOMAIN,
-		:box => "rockylinux/8",
-		:ip => PRIVATE_NET + "11",
-		:ram => 1024,
-		:cpunum => 1,
-		:playbook => ANSIBLEPLAY + "cluster_node.yml"
-		},
-{
-	:hostname => "db" + DOMAIN,
+	:hostname => "z2-vag",
 	:box => "rockylinux/8",
-  :ip => PRIVATE_NET + "11",
+	:ip => PRIVATE_NET + "42",
 	:ram => 1024,
 	:cpunum => 1,
-	:playbook => ANSIBLEPLAY + "initial.yml"
+	:playbook => ANSIBLEPLAY + "cluster.yml"
+	},
+{
+	:hostname => "db-vag",
+	:box => "rockylinux/8",
+  :ip => PRIVATE_NET + "43",
+	:ram => 1024,
+	:cpunum => 1,
+	:playbook => ANSIBLEPLAY + "cluster.yml"
   }
 ]
 

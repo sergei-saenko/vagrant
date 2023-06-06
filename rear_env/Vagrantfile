@@ -21,7 +21,7 @@ servers =[
 	:cpunum => 2,
 	#:hdd_name => "r8server_nfs_hdd.vdi",
   #:hdd_size => "20000",
-	:playbook => ANSIBLEPLAY + "initial.yml"
+	:playbook => ANSIBLEPLAY + "rear.yml"
   }, 
 	{
 	:hostname => "nfs-client-vag",
@@ -31,7 +31,7 @@ servers =[
 	:cpunum => 2,
 	#	:hdd_name => "r8client_nfs_hdd.vdi",
 	#	:hdd_size => "20000",
-	:playbook => ANSIBLEPLAY + "initial.yml"
+	:playbook => ANSIBLEPLAY + "rear.yml"
 	}
 ]
 

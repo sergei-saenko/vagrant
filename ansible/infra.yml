@@ -105,7 +105,7 @@
                    local-zone: "local." static
 
                    ##==VAGRANT virtual machines 
-                   local-data: "dns-vag.local IN A 192.168.56.250"
+                   local-data: "infra-vag.local IN A 192.168.56.250"
 
                    local-data: "rocky9-vag.local IN A 192.168.56.10"
                    local-data: "rocky8-vag.local IN A 192.168.56.11"

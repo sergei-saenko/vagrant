@@ -8,13 +8,13 @@
 # VmWare Fusion (macosx): not tested
 
 PRIVATE_NET="192.168.56."
-ANSIBLEPLAY="../infra_env/"
+ANSIBLEPLAY="../ansible/"
 #DOMAIN=".local"
 
 servers =[
 	
 {
-	:hostname => "dns-vag",
+	:hostname => "infra-vag",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "250",
 	:ram => 1024,

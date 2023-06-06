@@ -1,0 +1,221 @@
+---
+  - name: Cluster node configuration
+    hosts: all
+    become: yes
+    vars:
+      guestuser: vagrant
+    
+
+    tasks:
+
+## ALL HOSTS PART: Begining
+      - name: ALL HOSTS - OS configuration
+        block: 
+
+          - name: ALL HOSTS - Selinux is disabled 
+            selinux:
+              state: disabled
+
+          - name: ALL HOSTS - filrewalld 
+            service: 
+              name: firewalld
+              state: started
+              enabled: yes
+      
+          - name: ALL HOSTS - Time zone set to Warsaw   
+            timezone:
+              name: Europe/Warsaw
+    
+          - name: ALL HOSTS - Colorize prompt for user
+            blockinfile:
+              path: /home/{{ guestuser }}/.bashrc
+              block: |
+                PS1="\[\e[0;1;2m\][`sudo virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;36m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+                
+          - name: ALL HOSTS - Colorize prompt for root
+            blockinfile:
+              path: /root/.bashrc
+              block: |
+                PS1="\[\e[0;1;2m\][`virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;33m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+            
+          - name: ALL HOSTS - DNS Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
+            copy:
+              dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+              content: |
+                    [main]
+                    dns=none
+
+          - name: ALL HOSTS - DNS Reload NetworkManager service
+            systemd:
+              name: NetworkManager
+              state: reloaded
+
+          - name: ALL HOSTS - DNS Modification of /etc/resolv.conf
+            copy:
+              dest: /etc/resolv.conf
+              content: |
+                    search local
+                    nameserver 192.168.56.250
+                    nameserver 8.8.8.8
+
+          - name: ALL HOSTS - OS update
+            yum:
+              name: '*'
+              state: latest
+
+          - name: INIITIAL - Check if new kernel is available
+            shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+            register: new_kernel
+    
+          - name: ALL HOSTS - Reboot
+            reboot:
+            when: ansible_kernel != new_kernel.stdout 
+        
+          - name: ALL HOSTS - Packages for minimal installation
+            yum:
+              name:
+                - vim
+                - bind-utils
+                - dos2unix
+                - epel-release
+                - yum-utils 
+                - unzip 
+                - wget
+                - python3-pexpect
+              state: present
+            ignore_errors: true
+## ALL HOSTS PART: Ending
+
+## BACKEND HOST PART: Begining
+      - name: BACKEND - configuration
+        block:
+
+          - name: BACKEND - Mariadb and NFS package installation
+            yum:
+              name:
+                - mariadb-server
+                - nfs-utils
+              state: present
+
+          - name: BACKEND - open ports on firewalld
+            firewalld: 
+                service: "{{ item }}"
+                permanent: yes
+                immediate: yes
+                state: enabled
+            loop:
+              - mysql 
+              - mountd
+              - nfs
+              - rpc-bind
+          
+          - name: BACKEND - Start/enable Mariadb service
+            service: 
+              name: mariadb
+              state: started
+              enabled: yes
+
+          - name: BACKEND - Check if mysql_secure_installation has been executed
+            stat:
+              path: /var/lib/mysql/installation_flag.file
+            register: flag_file
+
+          - name: BACKEND - Run mysql_secure_installation
+            expect:
+              command: mysql_secure_installation
+              responses:
+                "Enter current password for root (enter for none):": "\r"
+                "Set root password? [Y/n]": "Y"
+                "New password:": "explorer\r"
+                "Re-enter new password:": "explorer\r"
+                "Remove anonymous users? [Y/n]": "Y\r"
+                "Disallow root login remotely? [Y/n]": "Y\r"
+                "Remove test database and access to it? [Y/n]": "Y\r"
+                "Reload privilege tables now?": "Y\r"
+            #no_log: true    
+            when: flag_file.stat.exists == false
+
+          - name: BACKEND - Create flag file
+            file:
+              path: /var/lib/mysql/installation_flag.file
+              state: touch
+            when: flag_file.stat.exists == false
+
+          - name: BACKEND - create apache group
+            group:
+              name: apache
+              gid: 48
+          - name: BACKEND - create apache user
+            user:
+              name: apache
+              uid: 48
+              group: apache
+         
+
+        when: inventory_hostname == 'db-vag'
+
+## BACKEND HOST PART: Ending
+
+##CLUSTER NODES PART: Begining
+      - name: CLUSTER NODES - configuration
+        block:
+           
+          - name: CLUSTER NODES - open ports on firewalld
+            firewalld: 
+                service: "{{ item }}"
+                permanent: yes
+                immediate: yes
+                state: enabled
+            loop:
+              - http
+              - high-availability
+
+          - name: CLUSTER NODES - install http and remi repo
+            yum:
+              name: 
+                - httpd
+                - http://rpms.remirepo.net/enterprise/remi-release-8.rpm
+              state: present
+              disable_gpg_check: yes
+          
+          - name: CLUSTER NODES - disable gpg check for remi repo
+            shell: sed -i 's/gpgcheck=1/gpgcheck=0/g' /etc/yum.repos.d/remi*
+
+          - name: CLUSTER NODES - install PHP 8.2 packages
+            yum:
+              name:
+                - php82 
+                - php82-php-mysqlnd 
+                - php82-php-gd 
+                - php82-php-fpm 
+                - php82-php-intl 
+                - php82-php-pecl-imagick-im7 
+                - php82-php-pecl-zip 
+                - php82-libzip
+              state: present
+
+          - name: CLUSTER NODES - install cluster packages
+            yum:
+              name:
+                - pcs 
+                - pacemaker 
+                - fence-agents-all
+              state: present
+              enablerepo: ha
+
+          - name: CLUSTER NODES - enable php-fpm service
+            service: 
+              name: "{{ item }}"
+              state: started
+              enabled: yes
+            loop:
+               - php82-php-fpm
+               - pcsd
+        when: inventory_hostname in ['z1-vag', 'z2-vag']  
+##CLUSTER NODES PART: Ending
+  
+
+  
+  
+        
+         
