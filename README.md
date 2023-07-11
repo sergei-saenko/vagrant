@@ -8,7 +8,7 @@ Need to be done following:
 - complete cluster creation part
 
 ## Tested environment
-OS Versions: MacOSX (Monterey 12.6, Ventura 13.1)
+OS Versions: MacOSX (Monterey 12.6, Ventura 13.1/13.4.1)
 
 ### Provider
 VirtualBox 7.0.6 r155176
