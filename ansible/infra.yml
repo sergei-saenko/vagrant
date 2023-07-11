@@ -105,28 +105,28 @@
                    local-zone: "local." static
 
                    ##==VAGRANT virtual machines 
-                   local-data: "infra-vag.local IN A 192.168.56.250"
+                   local-data: "vag-infra.local IN A 192.168.56.250"
 
-                   local-data: "rocky9-vag.local IN A 192.168.56.10"
-                   local-data: "rocky8-vag.local IN A 192.168.56.11"
-                   local-data: "centos7-vag.local IN A 192.168.56.12"
-                   local-data: "centos6-vag.local IN A 192.168.56.13"
-                   local-data: "ubuntu16-vag.local IN A 192.168.56.14"
-                   local-data: "rhel8-vag.local IN A 192.168.56.15"
+                   local-data: "vag-rocky9.local IN A 192.168.56.10"
+                   local-data: "vag-rocky8.local IN A 192.168.56.11"
+                   local-data: "vag-centos7.local IN A 192.168.56.12"
+                   local-data: "vag-centos6.local IN A 192.168.56.13"
+                   local-data: "vag-ubuntu16.local IN A 192.168.56.14"
+                   local-data: "vag-rhel8.local IN A 192.168.56.15"
 
-                   local-data: "nfs-server-vag.local IN A 192.168.56.20"
-                   local-data: "nfs-client-vag.local IN A 192.168.56.21"
+                   local-data: "vag-nfs-server.local IN A 192.168.56.20"
+                   local-data: "vag-nfs-client.local IN A 192.168.56.21"
                    
                    ##VAGRANT RHCE cert env
-                   local-data: "control-vag.local IN A 192.168.56.30"
-                   local-data: "node1-vag.local IN A 192.168.56.31"
-                   local-data: "node2-vag.local IN A 192.168.56.32"
+                   local-data: "vag-control.local IN A 192.168.56.30"
+                   local-data: "vag-node1.local IN A 192.168.56.31"
+                   local-data: "vag-node2.local IN A 192.168.56.32"
 
                    ##VAGRANT cluster
-                   local-data: "cluster-vag.local IN A 192.168.56.40"
-                   local-data: "z1-vag.local IN A 192.168.56.41"
-                   local-data: "z2-vag.local IN A 192.168.56.42"
-                   local-data: "db-vag.local IN A 192.168.56.43"
+                   local-data: "vag-cluster.local IN A 192.168.56.40"
+                   local-data: "vag-z1.local IN A 192.168.56.41"
+                   local-data: "vag-z2.local IN A 192.168.56.42"
+                   local-data: "vag-db.local IN A 192.168.56.43"
                    
                    ##==VMWARE fusion virtual machines
                    local-data: "r8wp.local IN A 172.16.137.192"

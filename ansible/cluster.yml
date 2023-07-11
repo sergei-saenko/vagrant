@@ -151,11 +151,11 @@
               group: apache
          
 
-        when: inventory_hostname == 'db-vag'
+        when: inventory_hostname == 'vag-db'
 
 ## BACKEND HOST PART: Ending
 
-##CLUSTER NODES PART: Begining
+## CLUSTER NODES PART: Begining
       - name: CLUSTER NODES - configuration
         block:
            
@@ -210,7 +210,7 @@
             loop:
                - php82-php-fpm
                - pcsd
-        when: inventory_hostname in ['z1-vag', 'z2-vag']  
+        when: inventory_hostname in ['vag-z1', 'vag-z2']  
 ##CLUSTER NODES PART: Ending
   
 

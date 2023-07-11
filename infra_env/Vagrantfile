@@ -14,7 +14,7 @@ ANSIBLEPLAY="../ansible/"
 servers =[
 	
 {
-	:hostname => "infra-vag",
+	:hostname => "vag-infra",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "250",
 	:ram => 1024,

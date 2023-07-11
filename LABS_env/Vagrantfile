@@ -14,7 +14,7 @@ ANSIBLEPLAY="../ansible/"
 servers =[
 	
 {
-	:hostname => "rocky9-vag",
+	:hostname => "vag-rocky9",
 	:box => "rockylinux/9",
   :ip => PRIVATE_NET + "10",
   :ram => 4096,
@@ -22,7 +22,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "initial.yml"
   },
 {
-	:hostname => "rocky8-vag",
+	:hostname => "vag-rocky8",
 	:box => "rockylinux/8",
   #:hostname => "c1" + DOMAIN,
   :ip => PRIVATE_NET + "11",
@@ -34,7 +34,7 @@ servers =[
   # :hdd_size => "10000"
   }, 
 {
-	:hostname => "centos7-vag",
+	:hostname => "vag-centos7",
 	:box => "centos/7",
   :ip => PRIVATE_NET + "12",
   :ram => 1024,
@@ -42,7 +42,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "initial.yml"
   },	
 {
-	:hostname => "centos6-vag",
+	:hostname => "vag-centos6",
 	:box => "generic/centos6",
   :ip => PRIVATE_NET + "13",
   :ram => 1024,
@@ -50,7 +50,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "initial.yml"
   },
 {
-	:hostname => "ubuntu16-vag",
+	:hostname => "vag-ubuntu16",
 	:box => "ubuntu/xenial64",
   :ip => PRIVATE_NET + "14",
   :ram => 1024,
@@ -58,7 +58,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "initial.yml"
   },
 {
-	:hostname => "rhel8-vag",
+	:hostname => "vag-rhel8",
 	:box => "generic/rhel8",
   :ip => PRIVATE_NET + "15",
   :ram => 1024,

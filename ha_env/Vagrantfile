@@ -14,7 +14,7 @@ DOMAIN=".local"
 servers =[
 	
 {
-	:hostname => "z1-vag",	
+	:hostname => "vag-z1",	
 	#:hostname => "z1-vag" + DOMAIN,
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "41",
@@ -23,7 +23,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "cluster.yml"
   }, 
 {
-	:hostname => "z2-vag",
+	:hostname => "vag-z2",
 	:box => "rockylinux/8",
 	:ip => PRIVATE_NET + "42",
 	:ram => 1024,
@@ -31,7 +31,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "cluster.yml"
 	},
 {
-	:hostname => "db-vag",
+	:hostname => "vag-db",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "43",
 	:ram => 1024,

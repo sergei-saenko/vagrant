@@ -15,7 +15,7 @@ servers =[
 	
 {
 	#:hostname => "control" + DOMAIN,
-	:hostname => "control",
+	:hostname => "vag-control",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "30",
 	:ram => 1024,
@@ -23,7 +23,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "rhce.yml"
   },
 {
-	:hostname => "ansible1",
+	:hostname => "vag-node1",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "31",
 	:ram => 1024,
@@ -31,7 +31,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "rhce.yml"
   },
 	{
-	:hostname => "ansible2",
+	:hostname => "vag-node2",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "32",
 	:ram => 1024,

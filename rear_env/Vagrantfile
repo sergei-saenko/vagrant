@@ -14,7 +14,7 @@ ANSIBLEPLAY="../ansible/"
 servers =[
 	
 {
-	:hostname => "nfs-server-vag",
+	:hostname => "vag-nfs-server",
 	:box => "rockylinux/8",
   :ip => PRIVATE_NET + "20",
 	:ram => 1024,
@@ -24,7 +24,7 @@ servers =[
 	:playbook => ANSIBLEPLAY + "rear.yml"
   }, 
 	{
-	:hostname => "nfs-client-vag",
+	:hostname => "vag-nfs-client",
 	:box => "rockylinux/8",
 	:ip => PRIVATE_NET + "21",
 	:ram => 1024,
