@@ -1,5 +1,9 @@
 # VAGRANT
-One-command virtual environment boot up
+One-command virtual environment boot up. <br>
+You should have a ssh-key private and public with following naming:
+- id_rsa_vagrant
+- id_rsa_vagrant.pub
+There should be located in your user ~/.ssh directory.
 
 ## TO-DO
 Complete cluster.yml.<br>

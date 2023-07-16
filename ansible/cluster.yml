@@ -11,10 +11,25 @@
 ## ALL HOSTS PART: Begining
       - name: ALL HOSTS - OS configuration
         block: 
-
           - name: ALL HOSTS - Selinux is disabled 
             selinux:
-              state: disabled
+                state: disabled
+
+          - name: ALL HOSTS - OS update
+            yum:
+              name: '*'
+              state: latest
+
+          - name: ALL HOSTS - Clean YUM cache after update
+            shell: yum clean all
+
+          - name: ALL HOSTS - Check if new kernel is available
+            shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+            register: new_kernel
+    
+          - name: ALL HOSTS - Reboot
+            reboot:
+            when: ansible_kernel != new_kernel.stdout 
 
           - name: ALL HOSTS - filrewalld 
             service: 
@@ -57,19 +72,6 @@
                     search local
                     nameserver 192.168.56.250
                     nameserver 8.8.8.8
-
-         # - name: ALL HOSTS - OS update
-          #  yum:
-           #   name: '*'
-            #  state: latest
-
-          - name: ALL HOSTS - Check if new kernel is available
-            shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
-            register: new_kernel
-    
-          - name: ALL HOSTS - Reboot
-            reboot:
-            when: ansible_kernel != new_kernel.stdout 
         
           - name: ALL HOSTS - Important package installation
             yum:
@@ -82,6 +84,7 @@
                 - unzip 
                 - wget
                 - python3-pexpect
+                - lvm2
               state: present
 ## ALL HOSTS PART: Ending
 

@@ -17,7 +17,7 @@ servers =[
 	:hostname => "vag-z1",	
 	#:hostname => "z1-vag" + DOMAIN,
 	:box => "rockylinux/8",
-  :ip => PRIVATE_NET + "41",
+  	:ip => PRIVATE_NET + "41",
 	:ram => 1024,
 	:cpunum => 1,
 	:playbook => ANSIBLEPLAY + "cluster.yml"
@@ -33,11 +33,19 @@ servers =[
 {
 	:hostname => "vag-db",
 	:box => "rockylinux/8",
-  :ip => PRIVATE_NET + "43",
+  	:ip => PRIVATE_NET + "43",
 	:ram => 1024,
 	:cpunum => 1,
 	:playbook => ANSIBLEPLAY + "cluster.yml"
-  }
+  },
+{
+  	:hostname => "vag-nas",
+  	:box => "rockylinux/8",
+	:ip => PRIVATE_NET + "44",
+  	:ram => 1024,
+  	:cpunum => 1,
+  	:playbook => ANSIBLEPLAY + "cluster.yml"
+}
 ]
 
 
