@@ -16,22 +16,34 @@ servers =[
 {
 	:hostname => "vag-rocky9",
 	:box => "rockylinux/9",
-  :ip => PRIVATE_NET + "10",
-  :ram => 4096,
+  	:ip => PRIVATE_NET + "10",
+  	:ram => 4096,
 	:cpunum => 2,
 	:playbook => ANSIBLEPLAY + "initial.yml"
   },
 {
-	:hostname => "vag-rocky8",
+	:hostname => "vag-rocky81",
 	:box => "rockylinux/8",
-  #:hostname => "c1" + DOMAIN,
-  :ip => PRIVATE_NET + "11",
+  	#:hostname => "c1" + DOMAIN,
+  	:ip => PRIVATE_NET + "11",
 	:ram => 1024,
 	:cpunum => 2,
 	:playbook => ANSIBLEPLAY + "initial.yml"
-  # :ip_int => "1",
+  	# :ip_int => "1",
 	# :hdd_name => "db2_hdd.vdi",
-  # :hdd_size => "10000"
+  	# :hdd_size => "10000"
+  }, 
+  {
+	:hostname => "vag-rocky82",
+	:box => "rockylinux/8",
+  	#:hostname => "c1" + DOMAIN,
+  	:ip => PRIVATE_NET + "16",
+	:ram => 1024,
+	:cpunum => 2,
+	:playbook => ANSIBLEPLAY + "initial.yml"
+  	# :ip_int => "1",
+	# :hdd_name => "db2_hdd.vdi",
+  	# :hdd_size => "10000"
   }, 
 {
 	:hostname => "vag-centos7",

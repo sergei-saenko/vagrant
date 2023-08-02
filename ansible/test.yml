@@ -1,0 +1,50 @@
+---
+  - name: Post-provision for Vagrant VM's
+    hosts: all
+    become: yes
+    
+    tasks:
+      - name: Selinux is disabled 
+        selinux:
+          state: disabled
+      
+      - name: Firewall is disabled 
+        systemd:
+          name: firewalld
+          state: stopped
+          enabled: no
+  
+      - name: Time zone set to Warsaw   
+        timezone:
+          name: Europe/Warsaw
+
+   
+      - name: Colorize prompt for root
+        blockinfile:
+          path: /root/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][`virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;33m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+
+
+      - name: OS and packages updated to latest version
+        yum:
+          name: '*'
+          state: latest
+      
+      - name: Packages to install
+        yum:
+          name:
+                - vim
+                - bind-utils
+                - dos2unix
+                - epel-release
+                - yum-utils 
+                - unzip 
+                - wget
+                - python3-pexpect
+                - lvm2
+                - rsyslog
+          state: latest
+        ignore_errors: true
+
+      
