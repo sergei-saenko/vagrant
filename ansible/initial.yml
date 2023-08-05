@@ -67,6 +67,7 @@
           enabled: yes
         loop:
           - rsyslog
+          - chronyd
   
       - name: INITIAL SETUP - Disable services
         systemd:
