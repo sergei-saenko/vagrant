@@ -5,12 +5,6 @@ You should have a ssh-key private and public with following naming:
 - id_rsa_vagrant.pub
 There should be located in your user ~/.ssh directory.
 
-## TO-DO
-Complete cluster.yml.<br>
-Need to be done following:
-- complete mariadb part
-- complete cluster creation part
-
 ## Tested environment
 OS Versions: MacOSX (Monterey 12.6, Ventura 13.1/13.4.1)
 
@@ -18,31 +12,31 @@ OS Versions: MacOSX (Monterey 12.6, Ventura 13.1/13.4.1)
 VirtualBox 7.0.12 r159484
 
 ### Vagrant
-Vagrant version: 2.3.7 <br>
+Vagrant version: 2.4.0 <br>
 Vagrant plugins:
   - vagrant-vbguest (0.21.0)
   - vagrant-hostmanager (1.8.9) <br> 
   
 Vagrant Boxes:
  + centos/7         (virtualbox, 2004.01)
- + generic/centos6 (virtualbox, 4.1.12)
+ + generic/centos6  (virtualbox, 4.3.4)
  + generic/centos9s (virtualbox, 4.1.14)
  + rockylinux/8     (virtualbox, 5.0.0) 
- + rockylinux/9     (virtualbox, 1.0.0) <br>
+ + rockylinux/9     (virtualbox, 2.0.0) 
+ + generic/rhel8    (virtualbox, 4.2.14) 
+ + ubuntu/xenial64  (virtualbox, 20211001.0.0) <br>
 
-
-centos/7        (virtualbox, 2004.01)
-generic/centos6 (virtualbox, 4.3.4)
-generic/rhel8   (virtualbox, 4.2.14)
-rockylinux/8    (virtualbox, 5.0.0)
-rockylinux/9    (virtualbox, 2.0.0)
-ubuntu/xenial64 (virtualbox, 20211001.0.0)
 
 
 ### User ssh config (add following strings to .ssh/config file in your home dir):
 Host * <br>
 	StrictHostKeyChecking no
 
+### TO-DO:
+Complete cluster.yml.<br>
+Need to be done following:
+- complete mariadb part
+- complete cluster creation part
 
 ### Not solved issues
 1. generic/centos6: ansible provision doesn work, error is below:<br>
