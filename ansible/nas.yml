@@ -1,5 +1,5 @@
 ---
-  - name: Post-provision for Vagrant VM's
+  - name: Cluster node configuration
     hosts: all
     become: yes
     vars:
@@ -7,6 +7,7 @@
     
 
     tasks:
+
 #####INITIAL SETUP - BEGINING##################################################
       - name: INITIAL SETUP - Selinux is disabled 
         selinux:
@@ -101,7 +102,32 @@
         reboot:
 #####INITIAL SETUP - ENDING##################################################
 
-
 #####CUSTOM SETUP - BEGINING#################################################
+      - name: NAS PART - OS configuration
+        block: 
+          - name: NAS PART - Package installation 
+            yum:
+              name:
+                - targetcli
+              state: latest
+          - name: NAS PART - Firewalld opening
+            firewalld: 
+                  service: "{{ item }}"
+                  permanent: yes
+                  immediate: yes
+                  state: enabled
+            loop:
+                - iscsi-target 
+          - name: NAS PART - iSCSI daemon start 
+            service: 
+              name: target
+              state: started
+              enabled: yes
 
-#####CUSTOM SETUP - ENDING###################################################
+#####CUSTOM SETUP - ENDING##################################################
+
+
+
+  
+        
+         

@@ -7,39 +7,106 @@
     
 
     tasks:
-      - name: Selinux is disabled 
+
+#####INITIAL SETUP - BEGINING##################################################
+      - name: INITIAL SETUP - Selinux is disabled 
         selinux:
           state: disabled
-      
-      - name: Disabled services 
+ 
+      - name: INITIAL SETUP - Time zone set to Warsaw   
+        timezone:
+          name: Europe/Warsaw
+
+      - name: INITIAL SETUP - Colorize prompt for guest user
+        blockinfile:
+          path: /home/{{ guestuser }}/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][`sudo virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;36m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+            
+      - name: INITIAL SETUP - Colorize prompt for root
+        blockinfile:
+          path: /root/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][`virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;33m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+
+      - name: INITIAL SETUP - Update OS to latest version
+        yum:
+          name: '*'
+          state: latest
+
+      - name: INITIAL SETUP - System reboot if new kernel is available
+        block:
+        
+          - name: INITIAL SETUP - Check if new kernel is installed but not loaded
+            shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+            register: new_kernel
+  
+          - name: INITIAL SETUP - Reboot
+            reboot:
+            when: ansible_kernel != new_kernel.stdout 
+
+      - name: INITIAL SETUP - Standard packages to install
+        yum:
+          name:
+                - vim
+                - bind-utils
+                - dos2unix
+                - epel-release
+                - yum-utils 
+                - unzip 
+                - wget
+                - python3-pexpect
+                - lvm2
+                - rsyslog
+          state: latest
+        ignore_errors: true
+
+      - name: INITIAL SETUP - Enable services
+        systemd:
+          name: "{{ item }}"
+          state: started
+          enabled: yes
+        loop:
+          - rsyslog
+          - chronyd
+  
+      - name: INITIAL SETUP - Disable services
         systemd:
           name: "{{ item }}"
           state: stopped
           enabled: no
         loop:
           - firewalld
-  
-      - name: Time zone set to Warsaw   
-        timezone:
-          name: Europe/Warsaw
-      
-      - name: Colorize prompt for user
-        blockinfile:
-          path: /home/{{ guestuser }}/.bashrc
-          block: |
-            PS1="\[\e[0;1;2m\][`sudo virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;36m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
-            
-      - name: Colorize prompt for root
-        blockinfile:
-          path: /root/.bashrc
-          block: |
-            PS1="\[\e[0;1;2m\][`virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;33m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
 
-      - name: Packages to install
+      - name: INITIAL SETUP - Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
+        copy:
+          dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+          content: |
+                [main]
+                dns=none
+      
+      - name: INITIAL SETUP - Reload NetworkManager service
+        systemd:
+          name: NetworkManager
+          state: reloaded
+
+      - name: INITIAL SETUP - Modification of /etc/resolv.conf
+        copy:
+          dest: /etc/resolv.conf
+          content: |
+                search local
+                nameserver 192.168.56.250
+                nameserver 8.8.8.8
+  
+      - name: INITIAL SETUP - Final reboot
+        reboot:
+#####INITIAL SETUP - ENDING##################################################
+
+#####CUSTOM SETUP - BEGINING##################################################
+
+      - name: INITIAL SETUP - Additional packages to install
         yum:
           name:
-            - vim
-            - wget
             - unbound
           state: latest
         #ignore_errors: true
@@ -171,26 +238,8 @@
         loop:
           - unbound
 
-      - name: Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
-        copy:
-          dest: /etc/NetworkManager/conf.d/90-dns-none.conf
-          content: |
-                [main]
-                dns=none
-      
-      - name: Reload NetworkManager service
-        systemd:
-          name: NetworkManager
-          state: reloaded
 
-      - name: Modification of /etc/resolv.conf
-        copy:
-          dest: /etc/resolv.conf
-          content: |
-                search local
-                nameserver 192.168.56.250
-                nameserver 8.8.8.8
                 
-      - name: Reboot
-        reboot:
+
+#####CUSTOM SETUP - ENDING##################################################
         
