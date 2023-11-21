@@ -1,0 +1,228 @@
+---
+  - name: INFRA post-provision for vbox without vagrant. Remote user is ROOT.
+    hosts: all
+    
+    tasks:
+
+#####INITIAL SETUP - BEGINING##################################################
+      - name: INITIAL SETUP - Selinux is disabled 
+        selinux:
+          state: disabled
+ 
+      - name: INITIAL SETUP - Time zone set to Warsaw   
+        timezone:
+          name: Europe/Warsaw
+
+      - name: INITIAL SETUP - Colorize prompt for root
+        blockinfile:
+          path: /root/.bashrc
+          block: |
+            PS1="\[\e[0;1;2m\][`virt-what|head -1`][\[\e[0m\]\[\033[1;33;1;33m\]\u\[\033[1;33;1;30m\]@\[\033[1;33;1;37m\]\h:\[\033[1;33;1;35m\]\w\[\e[0;1;2m\]]\[\e[0m\] $ \[\033[0m\]\[\033[0m\]"
+
+      - name: INITIAL SETUP - Update OS to latest version
+        yum:
+          name: '*'
+          state: latest
+
+      - name: INITIAL SETUP - System reboot if new kernel is available
+        block:
+        
+          - name: INITIAL SETUP - Check if new kernel is installed but not loaded
+            shell:  rpm -qa kernel|sort -rn|head -1|cut -c 8-40
+            register: new_kernel
+  
+          - name: INITIAL SETUP - Reboot
+            reboot:
+            when: ansible_kernel != new_kernel.stdout 
+
+      - name: INITIAL SETUP - Standard packages to install
+        yum:
+          name:
+                - vim
+                - bind-utils
+                - dos2unix
+                - epel-release
+                - yum-utils 
+                - unzip 
+                - wget
+                - python3-pexpect
+                - lvm2
+                - rsyslog
+          state: latest
+        ignore_errors: true
+
+      - name: INITIAL SETUP - Enable services
+        systemd:
+          name: "{{ item }}"
+          state: started
+          enabled: yes
+        loop:
+          - rsyslog
+          - chronyd
+  
+      - name: INITIAL SETUP - Disable services
+        systemd:
+          name: "{{ item }}"
+          state: started
+          enabled: yes
+        loop:
+          - firewalld
+      
+      - name: INITIAL SETUP - Open ports for DNS
+        firewalld:
+          service: "{{ item }}"
+          permanent: yes
+          state: enabled
+        loop:
+          - ssh
+          - dns
+
+      - name: INITIAL SETUP - Modification of /etc/NetworkManager/conf.d/90-dns-none.conf
+        copy:
+          dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+          content: |
+                [main]
+                dns=none
+      
+      - name: INITIAL SETUP - Reload NetworkManager service
+        systemd:
+          name: NetworkManager
+          state: reloaded
+
+      - name: INITIAL SETUP - Modification of /etc/resolv.conf
+        copy:
+          dest: /etc/resolv.conf
+          content: |
+                search local
+                nameserver 192.168.50.11
+                nameserver 8.8.8.8
+  
+      - name: INITIAL SETUP - Final reboot
+        reboot:
+#####INITIAL SETUP - ENDING##################################################
+
+#####CUSTOM SETUP - BEGINING##################################################
+
+      - name: INITIAL SETUP - Additional packages to install
+        yum:
+          name:
+            - unbound
+          state: latest
+        #ignore_errors: true
+
+      - name: Download root-hints file
+        get_url:
+          url: https://www.internic.net/domain/named.root
+          dest: /etc/unbound/root.hints
+          validate_certs: false
+          mode: '0644'
+      
+      - name: Modification of /etc/unbound/unbound.conf
+        copy:
+          dest: /etc/unbound/unbound.conf
+          content: |
+                server:
+                	verbosity: 1
+                	statistics-interval: 0
+                	statistics-cumulative: no
+                	extended-statistics: yes
+                	num-threads: 4
+                	  interface: 0.0.0.0
+                	  interface: ::0
+                	interface-automatic: no
+                	outgoing-port-permit: 32768-60999
+                	outgoing-port-avoid: 0-32767
+                	outgoing-port-avoid: 61000-65535
+                	so-reuseport: yes
+                	ip-transparent: yes
+                	max-udp-size: 3072
+                	edns-tcp-keepalive: yes
+                	  access-control: 127.0.0.0/8 allow
+                		access-control: 0.0.0.0/0 allow
+                	chroot: ""
+                	username: "unbound"
+                	directory: "/etc/unbound"
+                	log-time-ascii: yes
+                	pidfile: "/var/run/unbound/unbound.pid"
+                	root-hints: "/etc/unbound/root.hints"
+                	harden-glue: yes
+                	harden-dnssec-stripped: yes
+                	harden-below-nxdomain: yes
+                	harden-referral-path: yes
+                	qname-minimisation: yes
+                	aggressive-nsec: yes
+                	unwanted-reply-threshold: 10000000
+                	prefetch: yes
+                	prefetch-key: yes
+                	deny-any: yes
+                	rrset-roundrobin: yes
+                	minimal-responses: yes
+                	module-config: "ipsecmod validator iterator"
+                	trust-anchor-signaling: yes
+                	root-key-sentinel: yes
+                	trusted-keys-file: /etc/unbound/keys.d/*.key
+                	auto-trust-anchor-file: "/var/lib/unbound/root.key"
+                	val-clean-additional: yes
+                	val-permissive-mode: no
+                	serve-expired: yes
+                	serve-expired-ttl: 14400
+                	val-log-level: 1
+
+                   local-zone: "local." static
+
+                   ##==INFRASTRUCTURE 
+                   local-data: "infra.local IN A 192.168.50.11"
+                   local-data: "storage.local IN A 192.168.60.14"
+
+                   ##==Clustered Nodes
+                   local-data: "node1.local IN A 192.168.60.12"
+                   local-data: "node2.local IN A 192.168.60.13"
+
+                    ##==Clustered Labs
+                   local-data: "lab1.local IN A 192.168.60.25"
+                   local-data: "lab2.local IN A 192.168.60.26"
+
+                    ##==Clustered RedHats
+                   local-data: "cert1.local IN A 192.168.60.33"
+                   local-data: "cert2.local IN A 192.168.60.34"
+                   
+
+                	include: /etc/unbound/local.d/*.conf
+                	tls-ciphers: "PROFILE=SYSTEM"
+                	ipsecmod-enabled: no
+                	ipsecmod-hook:/usr/libexec/ipsec/_unbound-hook
+                python:
+                dynlib:
+                remote-control:
+                	control-enable: yes
+                	control-use-cert: "no"
+                	server-key-file: "/etc/unbound/unbound_server.key"
+                	server-cert-file: "/etc/unbound/unbound_server.pem"
+                	control-key-file: "/etc/unbound/unbound_control.key"
+                	control-cert-file: "/etc/unbound/unbound_control.pem"
+                include: /etc/unbound/conf.d/*.conf
+                forward-zone:
+                	name: "."
+                	forward-addr: 1.1.1.1
+                	forward-addr: 8.8.8.8
+                auth-zone:
+                	name: "."
+                	fallback-enabled: yes
+                	for-downstream: no
+                	for-upstream: yes
+                
+          validate: /usr/sbin/unbound-checkconf %s
+      
+      - name: Enabled/started services 
+        systemd:
+          name: "{{ item  }}"
+          state: started
+          enabled: yes
+        loop:
+          - unbound
+
+
+                
+
+#####CUSTOM SETUP - ENDING##################################################
+        
