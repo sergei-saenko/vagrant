@@ -181,11 +181,10 @@
                     ##==Clustered Labs
                    local-data: "lab1.local IN A 192.168.60.25"
                    local-data: "lab2.local IN A 192.168.60.26"
-
-                    ##==Clustered RedHats
+                   
+                    ##==Clustered Labs
                    local-data: "cert1.local IN A 192.168.60.33"
                    local-data: "cert2.local IN A 192.168.60.34"
-                   
 
                 	include: /etc/unbound/local.d/*.conf
                 	tls-ciphers: "PROFILE=SYSTEM"

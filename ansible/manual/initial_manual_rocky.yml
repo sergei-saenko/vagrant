@@ -68,7 +68,7 @@
         loop:
           - rsyslog
           - chronyd
-	  - firewalld
+          - firewalld
   
       - name: INITIAL SETUP - Disable services
         systemd:
