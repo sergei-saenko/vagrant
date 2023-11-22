@@ -57,6 +57,7 @@
                 - python3-pexpect
                 - lvm2
                 - rsyslog
+                - bc
           state: latest
         ignore_errors: true
 
